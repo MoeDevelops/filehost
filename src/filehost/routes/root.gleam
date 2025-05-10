@@ -1,43 +1,41 @@
+import filehost/view
+import filepath
 import gleam/http
-import lustre/attribute
-import lustre/element
-import lustre/element/html
-import wisp.{type Request, type Response}
+import gleam/result
+import gleam/string
+import simplifile
+import wisp.{type Request, type Response, UploadedFile}
+import youid/uuid
 
 pub fn handle_request(request: Request) -> Response {
   case request.method {
-    http.Get -> get(request)
+    http.Get -> get()
+    http.Post -> post(request)
     _ -> wisp.method_not_allowed([http.Get])
   }
 }
 
-fn get(_request: Request) {
-  let body =
-    view()
-    |> base()
-    |> element.to_document_string_tree()
+fn post(request: Request) {
+  use form_data <- wisp.require_form(request)
 
+  let id = uuid.v7_string()
+
+  case form_data.files {
+    [#("upload", UploadedFile(name, path))] -> {
+      let ext =
+        filepath.extension(name)
+        |> result.unwrap("")
+        |> string.lowercase()
+
+      let id = id <> "." <> ext
+      let assert Ok(_) = simplifile.copy(path, "data/" <> id)
+      wisp.redirect("/" <> id)
+    }
+    _ -> wisp.unprocessable_entity()
+  }
+}
+
+fn get() {
   wisp.ok()
-  |> wisp.string_tree_body(body)
-}
-
-fn base(body: element.Element(a)) {
-  html.html([], [html.head([], []), html.body([], [body])])
-}
-
-fn view() {
-  html.div([], [
-    html.h1([], [html.text("Filehost")]),
-    html.form(
-      [
-        attribute.action("/file"),
-        attribute.method("POST"),
-        attribute.enctype("multipart/form-data"),
-      ],
-      [
-        html.input([attribute.type_("file"), attribute.name("upload")]),
-        html.input([attribute.type_("submit"), attribute.value("Submit")]),
-      ],
-    ),
-  ])
+  |> wisp.string_tree_body(view.view())
 }

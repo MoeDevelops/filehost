@@ -18,7 +18,7 @@ pub fn handle_request(request: Request) -> Response {
   use request <- middleware(request)
   case wisp.path_segments(request) {
     [] -> root.handle_request(request)
-    ["file"] -> file.handle_request(request)
+    [id] -> file.handle_request(request, id)
     _ -> wisp.not_found() |> wisp.string_body("Not found")
   }
 }
