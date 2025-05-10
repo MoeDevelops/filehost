@@ -1,4 +1,4 @@
-name: Publish Server
+name: Publish
 
 on:
   release:
@@ -18,7 +18,7 @@ jobs:
           export RAWVERSION=${{ github.event.release.tag_name }}
           if [ $RAWVERSION = "" ]; then RAWVERSION="v0.0.0"; fi
           echo "version=$(sed 's/^.//' <<< $RAWVERSION)" >> $GITHUB_OUTPUT
-          echo "repo=ghcr.io/$(sed 's/\(.*\)/\L\1/' <<< $GITHUB_REPOSITORY)-server" >> $GITHUB_OUTPUT
+          echo "repo=ghcr.io/$(sed 's/\(.*\)/\L\1/' <<< $GITHUB_REPOSITORY)" >> $GITHUB_OUTPUT
 
       - name: Check-out
         uses: actions/checkout@v4
@@ -41,5 +41,4 @@ jobs:
         with:
           platforms: linux/amd64,linux/arm64
           push: true
-          context: server/
           tags: ${{ steps.info.outputs.repo }}:latest,${{ steps.info.outputs.repo }}:${{ steps.info.outputs.version }}
