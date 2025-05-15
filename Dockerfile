@@ -13,6 +13,9 @@ FROM erlang:alpine
 WORKDIR /app
 COPY --from=builder /build/build/erlang-shipment .
 
+RUN mkdir data
+
+VOLUME [ "/app/data" ]
 EXPOSE 5001
 STOPSIGNAL SIGKILL
 ENTRYPOINT [ "./entrypoint.sh", "run" ]
