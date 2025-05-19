@@ -1,11 +1,48 @@
 <!doctype html>
 <html>
-    <head></head>
+    <head>
+        <meta name="darkreader-lock" />
+        <style>
+            :root {
+                color-scheme: light dark;
+                font-family: sans-serif;
+            }
+
+            div {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+            }
+
+            h1 {
+                text-align: center;
+            }
+
+            form {
+                display: flex;
+                flex-direction: column;
+                margin: auto;
+                width: 50%;
+            }
+
+            input {
+                margin: 5px;
+            }
+
+            input[type="submit"] {
+                border: 0;
+                border-radius: 10px;
+                padding: 5px;
+                font-size: x-large;
+            }
+        </style>
+    </head>
     <body>
         <div>
             <h1>Filehost</h1>
             <form enctype="multipart/form-data" method="POST">
-                <input name="upload" type="file" />
+                <input type="file" name="upload" />
                 <input type="submit" value="Submit" />
             </form>
         </div>
